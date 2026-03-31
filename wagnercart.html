@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wagner Cart - Grocery & Household Essentials</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #2e7d32;
+            --secondary: #4caf50;
+            --accent: #ffeb3b;
+            --dark: #212121;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+        }
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        .cart-icon {
+            position: relative;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--accent);
+            color: var(--dark);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .hero {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .categories {
+            background: #f5f5f5;
+            padding: 2rem;
+        }
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .category-btn {
+            background: white;
+            border: none;
+            padding: 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .category-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        .products {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+        .product-image {
+            height: 200px;
+            background: linear-gradient(45deg, var(--secondary), var(--primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+        }
+        .product-info {
+            padding: 1.5rem;
+        }
+        .product-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .product-price {
+            font-size: 1.5rem;
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        .product-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .btn {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #45a049;
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        .cart-content {
+            background: white;
+            margin: 2rem;
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 600px;
+            margin: 2rem auto;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .close-cart {
+            float: right;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #999;
+        }
+        .total {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            text-align: right;
+            margin-top: 1rem;
+        }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .product-grid { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+            header { flex-direction: column; gap: 1rem; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">🛒 Wagner Cart</div>
+        <div class="cart-icon" onclick="toggleCart()">
+            🛍️ <span class="cart-count" id="cartCount">0</span>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1>Everything You Need</h1>
+        <p>Fresh groceries, household essentials & daily needs delivered fast</p>
+    </section>
+
+    <section class="categories">
+        <div class="category-grid">
+            <button class="category-btn" onclick="filterProducts('all')">All Products</button>
+            <button class="category-btn" onclick="filterProducts('grocery')">Groceries</button>
+            <button class="category-btn" onclick="filterProducts('household')">Household</button>
+            <button class="category-btn" onclick="filterProducts('personal')">Personal Care</button>
+            <button class="category-btn" onclick="filterProducts('fresh')">Fresh Produce</button>
+            <button class="category-btn" onclick="filterProducts('other')">Other</button>
+        </div>
+    </section>
+
+    <section class="products">
+        <div class="product-grid" id="productGrid">
+            <!-- Products will be populated by JavaScript -->
+        </div>
+    </section>
+
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <span class="close-cart" onclick="toggleCart()">&times;</span>
+            <h2>Your Cart</h2>
+            <div id="cartItems"></div>
+            <div class="total" id="cartTotal">Total: ₹0</div>
+            <button class="btn btn-primary" style="width:100%; margin-top:1rem;" onclick="checkout()">Checkout</button>
+        </div>
+    </div>
+
+    <script>
+        const products = [
+            {id:1, name:'Rice (5kg)', price:250, category:'grocery', icon:'🍚'},
+            {id:2, name:'Wheat Flour (5kg)', price:180, category:'grocery', icon:'🌾'},
+            {id:3, name:'Cooking Oil (1L)', price:140, category:'grocery', icon:'🛢️'},
+            {id:4, name:'Sugar (5kg)', price:220, category:'grocery', icon:'🍚'},
+            {id:5, name:'Salt (1kg)', price:25, category:'grocery', icon:'🧂'},
+            {id:6, name:'Tea Powder (500g)', price:180, category:'grocery', icon:'🍵'},
+            {id:7, name:'Coffee Powder (250g)', price:220, category:'grocery', icon:'☕'},
+            {id:8, name:'Milk (1L)', price:55, category:'grocery', icon:'🥛'},
+            {id:9, name:'Curd (500g)', price:45, category:'grocery', icon:'🧈'},
+            {id:10, name:'Butter (200g)', price:120, category:'grocery', icon:'🧈'},
+            {id:11, name:'Eggs (6pcs)', price:45, category:'grocery', icon:'🥚'},
+            {id:12, name:'Bread (400g)', price:35, category:'grocery', icon:'🍞'},
+            {id:13, name:'Biscuits (200g)', price:40, category:'grocery', icon:'🍪'},
+            {id:14, name:'Noodles (Pack)', price:25, category:'grocery', icon:'🍜'},
+            {id:15, name:'Soap (75g)', price:25, category:'personal', icon:'🧼'},
+            {id:16, name:'Shampoo (200ml)', price:150, category:'personal', icon:'🧴'},
+            {id:17, name:'Toothpaste (100g)', price:80, category:'personal', icon:'🪥'},
+            {id:18, name:'Toothbrush', price:45, category:'personal', icon:'🪥'},
+            {id:19, name:'Detergent Powder (1kg)', price:120, category:'household', icon:'🧺'},
+            {id:20, name:'Dish Wash Liquid (500ml)', price:95, category:'household', icon:'🍽️'},
+            {id:21, name:'Floor Cleaner (1L)', price:110, category:'household', icon:'🧹'},
+            {id:22, name:'Toilet Cleaner (500ml)', price:85, category:'household', icon:'🚽'},
+            {id:23, name:'Hand Wash (250ml)', price:75, category:'personal', icon:'🧼'},
+            {id:24, name:'Face Wash (100ml)', price:120, category:'personal', icon:'🧴'},
+            {id:25, name:'Body Lotion (200ml)', price:180, category:'personal', icon:'💧'},
+            {id:26, name:'Deodorant (150ml)', price:220, category:'personal', icon:'🫧'},
+            {id:27, name:'Sanitary Pads (8pcs)', price:65, category:'personal', icon:'🩸'},
+            {id:28, name:'Tissues (Pack)', price:35, category:'household', icon:'🧻'},
+            {id:29, name:'Garbage Bags (10pcs)', price:80, category:'household', icon:'🗑️'},
+            {id:30, name:'Water Bottles (20L)', price:45, category:'other', icon:'💧'},
+            {id:31, name:'Potatoes (1kg)', price:35, category:'fresh', icon:'🥔'},
+            {id:32, name:'Onions (1kg)', price:45, category:'fresh', icon:'🧅'},
+            {id:33, name:'Tomatoes (1kg)', price:55, category:'fresh', icon:'🍅'},
+            {id:34, name:'Green Chilies', price:25, category:'fresh', icon:'🌶️'},
+            {id:35, name:'Garlic (250g)', price:60, category:'fresh', icon:'🧄'},
+            {id:36, name:'Ginger (250g)', price:70, category:'fresh', icon:'🫚'},
+            {id:37, name:'Chicken (1kg)', price:320, category:'fresh', icon:'🍗'},
+            {id:38, name:'Fish (1kg)', price:280, category:'fresh', icon:'🐟'},
+            {id:39, name:'Dal (1kg)', price:180, category:'grocery', icon:'🍛'},
+            {id:40, name:'Spices Pack', price:150, category:'grocery', icon:'🌶️'}
+        ];
+
+        let cart = [];
+        let currentFilter = 'all';
+
+        function renderProducts(filter = 'all') {
+            const grid = document.getElementById('productGrid');
+            const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
+            
+            grid.innerHTML = filtered.map(product => `
+                <div class="product-card" data-category="${product.category}">
+                    <div class="product-image">${product.icon}</div>
+                    <div class="product-info">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">₹${product.price}</div>
+                        <div class="product-actions">
+                            <button class="btn btn-primary" onclick="addToCart(${product.id})">Add to Cart</button>
+                            <button class="btn btn-outline" onclick="quickView(${product.id})">Quick View</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            const cartItem = cart.find(item => item.id === id);
+            
+            if (cartItem) {
+                cartItem.quantity += 1;
+            } else {
+                cart.push({...product, quantity: 1});
+            }
+            
+            updateCartCount();
+            alert(`${product.name} added to cart!`);
+        }
+
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+
+        function toggleCart() {
+            const modal = document.getElementById('cartModal');
+            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+            renderCart();
+        }
+
+        function renderCart() {
+            const cartItems = document.getElementById('cartItems');
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p>Your cart is empty</p>';
+            } else {
+                cartItems.innerHTML = cart.map(item => `
+                    <div style="display:flex; justify-content:space-between; margin-bottom:1rem; padding-bottom:1rem; border-bottom:1px solid #eee;">
+                        <div>
+                            <strong>${item.name}</strong><br>
+                            <small>₹${item.price} x ${item.quantity}</small>
+                        </div>
+                        <div>
+                            ₹${(item.price * item.quantity).toFixed(2)}
+                            <button onclick="removeFromCart(${item.id})" style="margin-left:1rem; background:#f44336; color:white; border:none; padding:0.3rem 0.6rem; border-radius:4px; cursor:pointer;">Remove</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            document.getElementById('cartTotal').textContent = `Total: ₹${total.toFixed(2)}`;
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCartCount();
+            renderCart();
+        }
+
+        function filterProducts(category) {
+            currentFilter = category;
+            renderProducts(category);
+        }
+
+        function quickView(id) {
+            const product = products.find(p => p.id === id);
+            alert(`Quick View: ${product.name}\nPrice: ₹${product.price}\nCategory: ${product.category}`);
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            alert('Thank you for your order! Redirecting to payment...');
+            cart = [];
+            updateCartCount();
+            toggleCart();
+        }
+
+        // Initialize
+        renderProducts();
+        updateCartCount();
+    </script>
+</body>
+</html>
